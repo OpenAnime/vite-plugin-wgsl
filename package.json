@@ -1,0 +1,43 @@
+{
+    "name": "vite-plugin-wgsl",
+    "version": "1.0.0",
+    "author": "SpongeBed81",
+    "description": "Minify and mangle WGSL shaders in Vite projects.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "type": "module",
+    "scripts": {
+        "build": "tsup",
+        "lint": "prettier --check . && eslint .",
+        "lint:fix": "prettier --write . && eslint . --fix",
+        "test": "tsup && node --test && prettier --check . && eslint ."
+    },
+    "keywords": [
+        "wgsl",
+        "webgpu",
+        "vite",
+        "rollup",
+        "esbuild"
+    ],
+    "dependencies": {
+        "typescript": "^5.4.5"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.1.1",
+        "@swc/core": "^1.4.17",
+        "@types/node": "^20.12.7",
+        "eslint": "^9.1.1",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.1.3",
+        "eslint-plugin-simple-import-sort": "^12.1.0",
+        "globals": "^15.1.0",
+        "prettier": "^3.2.5",
+        "tslib": "^2.6.2",
+        "tsup": "^8.0.2",
+        "typescript-eslint": "^7.8.0"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "packageManager": "pnpm@9.3.0"
+}
