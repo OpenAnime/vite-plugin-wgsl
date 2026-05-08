@@ -50,6 +50,12 @@ describe('mangleTypescriptShaderStrings', () => {
 });
 
 describe('wgslPlugin', () => {
+    it('does not restrict Vite apply mode by default', () => {
+        const plugin = wgslPlugin({ include: '**/*.wgsl' });
+
+        assert.equal(plugin.apply, undefined);
+    });
+
     it('passes through the Vite apply option', () => {
         const apply = (_config, env) => env.command === 'build';
         const buildOnlyPlugin = wgslPlugin({ include: '**/*.wgsl', apply: 'build' });

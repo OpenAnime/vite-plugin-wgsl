@@ -224,7 +224,7 @@ export function wgslPlugin(options: VitePluginWgslOptions): VitePluginLike {
 
     return {
         name: 'vite-plugin-wgsl',
-        apply: options?.apply ?? 'build',
+        apply: options.apply,
         async load(id) {
             if (!filter(id) || !WGSL_EXTENSIONS.has(extensionOf(id))) return null;
             return toWgslModule(await readFile(stripQuery(id), 'utf8'), mangleOptions);
