@@ -158,7 +158,9 @@ function declareFunctionNames(
 
     for (const fn of analysis.functions) {
         const token = tokens[fn.nameTokenIndex];
-        if (!isRenameableIdentifier(token) || token.value === 'main') continue;
+        if (!isRenameableIdentifier(token) || token.value === 'main' || fn.isEntryPoint) {
+            continue;
+        }
 
         const mangled = allocateName(globalScope, counter);
         globalScope.declare(token.value, mangled);

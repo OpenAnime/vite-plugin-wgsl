@@ -6,6 +6,7 @@ export interface FunctionInfo {
     paramTokenIndices: number[];
     bodyStartTokenIndex: number;
     bodyEndTokenIndex: number;
+    isEntryPoint: boolean;
 }
 
 export interface DeclInfo {
@@ -58,6 +59,55 @@ function findMatchingToken(
     }
 
     return undefined;
+}
+
+function findMatchingTokenBackwards(
+    tokens: Token[],
+    closeIndex: number,
+    openValue: string,
+    closeValue: string,
+): number | undefined {
+    let depth = 0;
+
+    for (let i = closeIndex; i >= 0; i--) {
+        const token = tokens[i];
+        if (isTrivia(token)) continue;
+        if (token.value === closeValue) depth++;
+        if (token.value === openValue) {
+            depth--;
+            if (depth === 0) return i;
+        }
+    }
+
+    return undefined;
+}
+
+function hasEntryPointAttribute(tokens: Token[], fnTokenIndex: number): boolean {
+    let cursor = previousSignificantIndex(tokens, fnTokenIndex - 1);
+
+    while (cursor !== undefined) {
+        const token = tokens[cursor];
+
+        if (token.value === ')') {
+            const open = findMatchingTokenBackwards(tokens, cursor, '(', ')');
+            if (open === undefined) return false;
+            cursor = previousSignificantIndex(tokens, open - 1);
+            continue;
+        }
+
+        if (token.type !== 'attribute') return false;
+        if (
+            token.value === '@vertex' ||
+            token.value === '@fragment' ||
+            token.value === '@compute'
+        ) {
+            return true;
+        }
+
+        cursor = previousSignificantIndex(tokens, cursor - 1);
+    }
+
+    return false;
 }
 
 function collectParamTokenIndices(
@@ -157,6 +207,7 @@ export function analyzeTokens(tokens: Token[]): WgslAnalysis {
             paramTokenIndices,
             bodyStartTokenIndex,
             bodyEndTokenIndex,
+            isEntryPoint: hasEntryPointAttribute(tokens, i),
         };
 
         functions.push(fn);

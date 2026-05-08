@@ -68,6 +68,39 @@ describe('mangleWgsl', () => {
         assert.match(output, /\bvec4f\(/);
     });
 
+    it('preserves WGSL entry point function names', () => {
+        const source = `
+            struct VertexOut {
+                @builtin(position) position: vec4f,
+                @location(0) uv: vec2f,
+            }
+
+            fn helper(inputColor: vec4f) -> vec4f {
+                let localValue = inputColor;
+                return localValue;
+            }
+
+            @vertex
+            fn vertex_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOut {
+                var output: VertexOut;
+                output.position = vec4f(0.0);
+                output.uv = vec2f(f32(vertexIndex), 0.0);
+                return output;
+            }
+
+            @fragment
+            fn fragment_main(@location(0) uv: vec2f) -> @location(0) vec4f {
+                return helper(vec4f(uv, 0.0, 1.0));
+            }
+        `;
+
+        const output = mangleWgsl(source);
+
+        assert.match(output, /@vertex fn vertex_main\(/);
+        assert.match(output, /@fragment fn fragment_main\(/);
+        assert.doesNotMatch(output, /\bhelper\b/);
+    });
+
     it('skips WGSL reserved words when allocating short names', () => {
         const declarations = Array.from(
             { length: 48 },

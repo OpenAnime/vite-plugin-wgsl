@@ -1,6 +1,6 @@
 {
     "name": "vite-plugin-wgsl",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "SpongeBed81",
     "description": "Minify and mangle WGSL shaders in Vite projects.",
     "main": "dist/index.js",
